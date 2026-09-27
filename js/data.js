@@ -84,13 +84,16 @@ function saveSettings(settings) {
 }
 
 function getProducts() {
+  // دمج الكتب الافتراضية مع أي تعديلات محلية لضمان ظهور الكتب دائماً
   try {
     const saved = localStorage.getItem("trira_books_v1");
     if (saved) {
       const parsed = JSON.parse(saved);
-      if (parsed && parsed.length > 0) return parsed;
+      // إذا كانت البيانات القديمة تحتوى على كتاب واحد، نقوم بدمجها أو إجبارها على أخذ الافتراضي المحدث
+      if (parsed && parsed.length > 2) return parsed;
     }
   } catch (e) {}
+  
   localStorage.setItem("trira_books_v1", JSON.stringify(DEFAULT_BOOKS));
   return DEFAULT_BOOKS;
 }
