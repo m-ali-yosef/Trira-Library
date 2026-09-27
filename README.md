@@ -1,19 +1,9 @@
-# سكني للعناية بالبشرة
+# Trira — Professional Digital PDF Library & Bookstore
 
-موقع ثابت (HTML / CSS / JS).
+Trira is a modern, bilingual (Arabic & English) digital library and e-book platform built for seamless online publishing and direct customer delivery.
 
-## الرابط
-
-**[https://m-ali-yosef.github.io/ideal-invention/](https://m-ali-yosef.github.io/ideal-invention/)**
-
-## تفعيل GitHub Pages (مرة واحدة)
-
-الـ Actions لا يستطيع تفعيل Pages لوحده. افعل هذا يدوياً:
-
-1. افتح: [Settings → Pages](https://m-ali-yosef.github.io/ideal-invention/settings/pages)
-2. تحت **Build and deployment → Source** اختر **Deploy from a branch**
-3. **Branch:** `main`
-4. **Folder:** `/ (root)`
-5. اضغط **Save**
-
-خلال دقيقة يفتح الموقع على الرابط أعلاه.
+## Features
+1. Bilingual Storefront: Dedicated sections for Arabic and English PDF books.
+2. Admin Dashboard: Comprehensive control panel to manage books, articles, customer orders, and site settings.
+3. Secure Email Link Dispatch: Admins can easily assign PDF download links and dispatch them directly to customers.
+4. Dynamic Content & Cart: Fully interactive shopping experience powered by local storage.
