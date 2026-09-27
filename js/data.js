@@ -30,7 +30,7 @@ const DEFAULT_BOOKS = [
     lang: "ar",
     price: 290,
     category: "Finance",
-    introduction: "تعلم قراءة القوائم المالية، تحليل النسب، واتخاذ القرارات الاستثمارية بدقة واحترافية.",
+    introduction: "تعلم قراءة القوائم المالية، تحليل النسب، واتخاذ القرارات الاستثمارية بدقة واحرافية.",
     description: "دليل عملي لفهم القوائم المالية، حساب مؤشرات السيولة والربحية، وتقييم الأداء المالي للشركات.",
     image: "images/products/p3.jpg",
     downloadLink: ""
@@ -66,7 +66,7 @@ const DEFAULT_ARTICLES = [
     readTime: "4 min read",
     excerpt: "Discover why digital reference manuals and structured PDFs outperform traditional learning in fast-paced industries.",
     content: "Digital books and structured PDF guides provide an unprecedented level of accessibility and focused learning. In fast-paced technical and business environments, waiting for physical books or sorting through unverified online blogs wastes valuable time. Curated e-books offer distilled expertise, allowing professionals to absorb complex architectural patterns, financial strategies, or project management frameworks directly at their desktop or mobile device. Trira is dedicated to delivering these high-impact resources with 100% digital clarity.",
-    image: "https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?auto=format&fit=crop&w=800&q=75"
+    image: "https://images.unsplash.com/photo-1524995997946-a1c2e315a42f?auto=format&fit=crop&w=800&q=75"
   }
 ];
 
@@ -84,16 +84,15 @@ function saveSettings(settings) {
 }
 
 function getProducts() {
-  // دمج الكتب الافتراضية مع أي تعديلات محلية لضمان ظهور الكتب دائماً
   try {
     const saved = localStorage.getItem("trira_books_v1");
     if (saved) {
       const parsed = JSON.parse(saved);
-      // إذا كانت البيانات القديمة تحتوى على كتاب واحد، نقوم بدمجها أو إجبارها على أخذ الافتراضي المحدث
-      if (parsed && parsed.length > 2) return parsed;
+      if (parsed && parsed.length >= DEFAULT_BOOKS.length) {
+        return parsed;
+      }
     }
   } catch (e) {}
-  
   localStorage.setItem("trira_books_v1", JSON.stringify(DEFAULT_BOOKS));
   return DEFAULT_BOOKS;
 }
