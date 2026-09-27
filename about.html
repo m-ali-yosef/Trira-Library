@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>About Us — Trira Digital Library</title>
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&family=Poppins:wght@600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    .form-group { margin-bottom: 1rem; }
+    .form-group label { display: block; font-weight: 700; font-size: 0.88rem; margin-bottom: 0.35rem; color: var(--ink); }
+    .form-group input, .form-group textarea {
+      width: 100%; padding: 0.75rem 1rem; border-radius: var(--radius-sm); border: 1px solid var(--line);
+      background: #FFFFFF; font-size: 0.95rem; color: var(--ink); outline: none; transition: border-color 0.2s;
+    }
+    .form-group input:focus, .form-group textarea:focus { border-color: var(--teal); }
+    .form-group textarea { resize: vertical; min-height: 7rem; }
+  </style>
+</head>
+<body>
+ <header class="header">
+    <div class="header__inner">
+      <a href="index.html" class="logo" style="display: flex; align-items: center; gap: 0.6rem; text-decoration: none;">
+        <div style="width: 2.2rem; height: 2.2rem; background: var(--teal); color: #fff; display: grid; place-items: center; border-radius: 0.5rem; font-weight: 800; font-size: 1.1rem; font-family: var(--font-heading);">T</div>
+        <div style="font-size: 1.3rem; font-weight: 800; color: var(--teal); font-family: var(--font-heading);">Trira <span style="font-weight: 600; font-size: 0.85rem; color: var(--ink-soft);">Library</span></div>
+      </a>
+      <nav class="nav">
+        <a href="index.html" class="is-active">Store</a>
+        <a href="articles.html">Articles</a>
+        <a href="about.html">About Us</a>
+      </nav>
+      <div class="header__actions">
+        <button type="button" class="icon-btn" data-cart-toggle aria-label="Open cart">
+          🛒 <span class="cart-count" style="display:none;">0</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="section">
+    <div class="container" style="max-width: 900px;">
+      <header class="page-hero" style="text-align: center; margin-bottom: 2.5rem;">
+        <span class="badge" style="background: var(--teal-light); color: var(--teal); padding: 0.4rem 1rem; border-radius: 999px; font-weight: 700; font-size: 0.8rem;">About Trira</span>
+        <h1 style="margin-top: 1rem;">Empowering Knowledge Through Digital Books</h1>
+        <p>Trira is your premier digital destination for professional e-books, technical guides, and business references in both Arabic and English.</p>
+      </header>
+
+      <div style="background: #fff; padding: 2.5rem; border-radius: var(--radius); border: 1px solid var(--line); box-shadow: var(--shadow-sm); line-height: 1.8; margin-bottom: 3rem;">
+        <h3 style="color: var(--teal); margin-bottom: 1rem;">Our Mission</h3>
+        <p style="margin-bottom: 1.5rem;">We aim to bridge the knowledge gap by providing high-quality, curated PDF books that deliver immediate practical value to professionals, developers, and entrepreneurs.</p>
+        
+        <h3 style="color: var(--teal); margin-bottom: 1rem;">Direct & Secure Delivery</h3>
+        <p>When you purchase any guide from Trira, your request is reviewed directly by our team, and secure download links are dispatched straight to your email inbox with complete reliability.</p>
+      </div>
+
+      <!-- Contact Section -->
+      <div class="grid grid--2" style="align-items: start; gap: 2rem;">
+        <div style="background: #fff; padding: 2rem; border-radius: var(--radius); border: 1px solid var(--line);">
+          <h2>Get in Touch</h2>
+          <p class="muted" style="margin: 0.5rem 0 1.5rem;">Have questions regarding orders, books, or technical guides? Reach our support team anytime.</p>
+          
+          <ul style="list-style: none; display: grid; gap: 0.75rem; margin-bottom: 1.5rem;">
+            <li><strong>Email:</strong> <span data-footer-email>support@trira-books.com</span></li>
+            <li><strong>Phone:</strong> <span data-footer-phone>+20 100 000 0000</span></li>
+          </ul>
+        </div>
+
+        <div style="background: #fff; padding: 2rem; border-radius: var(--radius); border: 1px solid var(--line);">
+          <h2>Send a Message</h2>
+          <p class="muted" style="margin: 0.5rem 0 1.25rem;">We typically reply within a few hours.</p>
+
+          <form id="contactForm">
+            <div class="form-group">
+              <label>Your Name</label>
+              <input type="text" id="msgName" placeholder="e.g. Mohamed Ali" required>
+            </div>
+            <div class="form-group">
+              <label>Email Address</label>
+              <input type="email" id="msgEmail" placeholder="name@example.com" required>
+            </div>
+            <div class="form-group">
+              <label>Message</label>
+              <textarea id="msgText" placeholder="How can we assist you?" required></textarea>
+            </div>
+            <button type="submit" class="btn btn--primary" style="width: 100%;">Send Message</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Cart Drawer -->
+  <div class="drawer-overlay" id="drawerOverlay"></div>
+  <aside class="cart-drawer" id="cartDrawer" aria-label="Shopping Cart" aria-hidden="true">
+    <div class="cart-drawer__head">
+      <h3>Your Cart</h3>
+      <button type="button" class="icon-btn" id="closeCart">✕</button>
+    </div>
+    <div class="cart-drawer__list" id="cartList"></div>
+    <div class="cart-drawer__foot" id="cartFoot" style="display: none;">
+      <div class="cart-total">
+        <span>Subtotal</span>
+        <span id="cartTotal">0 EGP</span>
+      </div>
+      <button type="button" class="btn btn--primary" id="checkoutBtn">Place Order & Send Request</button>
+    </div>
+  </aside>
+
+  <footer class="footer">
+    <div class="container" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+      <div>
+        <p>© 2026 Trira. All rights reserved.</p>
+        <p style="font-size: 0.85rem; margin-top: 0.25rem;">Phone: <span data-footer-phone></span> | Email: <span data-footer-email></span></p>
+      </div>
+      <div style="display: flex; gap: 1rem; align-items: center;">
+        <a data-social-fb href="#" target="_blank" style="color: #94A3B8; text-decoration: none; font-weight: 600;">Facebook</a>
+        <a data-social-ig href="#" target="_blank" style="color: #94A3B8; text-decoration: none; font-weight: 600;">Instagram</a>
+        <a data-social-tt href="#" target="_blank" style="color: #94A3B8; text-decoration: none; font-weight: 600;">TikTok</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="js/data.js"></script>
+  <script src="js/main.js"></script>
+  <script>
+    document.getElementById("contactForm").onsubmit = (e) => {
+      e.preventDefault();
+      const newMessage = {
+        id: "MSG-" + Math.floor(1000 + Math.random() * 9000),
+        date: new Date().toLocaleString(),
+        name: document.getElementById("msgName").value,
+        email: document.getElementById("msgEmail").value,
+        text: document.getElementById("msgText").value
+      };
+
+      let messages = [];
+      try {
+        const saved = localStorage.getItem("trira_messages_v1");
+        if (saved) messages = JSON.parse(saved);
+      } catch (e) {}
+
+      messages.unshift(newMessage);
+      localStorage.setItem("trira_messages_v1", JSON.stringify(messages));
+
+      alert("Thank you! Your message has been sent to our support team.");
+      document.getElementById("contactForm").reset();
+    };
+  </script>
+</body>
+</html>
