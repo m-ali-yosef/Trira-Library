@@ -239,12 +239,13 @@
     if (tt) tt.href = settings.tiktok || "#";
   }
 
+  // دالة عرض الكتب حسب اللغة (مع جعل اللغة الافتراضية عند الفتح هي العربية 'ar')
   window.renderBooksByLang = function(lang) {
     const grid = document.getElementById("booksGrid");
     if (!grid) return;
 
     const books = typeof getProducts === "function" ? getProducts() : [];
-    const filtered = books.filter(b => b.lang === lang);
+    const filtered = books.filter(b => b.lang === (lang || 'ar'));
 
     if (filtered.length === 0) {
       grid.innerHTML = `<div style="grid-column: 1/-1; text-align: center; padding: 3rem;"><p class="muted">No books found in this section.</p></div>`;
@@ -284,15 +285,11 @@
     document.addEventListener("DOMContentLoaded", () => {
       updateCartUI();
       applyFooterSettings();
-      if (typeof window.renderBooksByLang === "function") {
-        window.renderBooksByLang('ar');
-      }
+      window.renderBooksByLang('ar'); // تبدأ باللغة العربية افتراضياً
     });
   } else {
     updateCartUI();
     applyFooterSettings();
-    if (typeof window.renderBooksByLang === "function") {
-      window.renderBooksByLang('ar');
-    }
+    window.renderBooksByLang('ar'); // تبدأ باللغة العربية افتراضياً
   }
 })();
