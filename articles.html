@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Articles & Insights — Trira</title>
+  <title>Articles — Trira Library</title>
   <link rel="icon" type="image/svg+xml" href="favicon.svg">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -38,8 +38,9 @@
         <p>Explore expert tips, book reviews, and strategies to accelerate your professional growth.</p>
       </header>
 
-      <div class="grid grid--3" id="articlesGrid">
-        <!-- Loaded dynamically -->
+      <!-- Articles Grid -->
+      <div id="articlesGrid" style="max-width: 800px; margin: 0 auto;">
+        <!-- Rendered dynamically -->
       </div>
     </div>
   </main>
@@ -76,35 +77,37 @@
     </div>
   </footer>
 
-  <script src="js/data.js"></script>
-  <script src="js/main.js"></script>
+  <script src="js/data.js?v=2.0"></script>
+  <script src="js/main.js?v=2.0"></script>
   <script>
-    document.addEventListener("DOMContentLoaded", () => {
+    // عرض المقالات مع ضمان استخدام الصورة الجديدة المحدثة
+    (function() {
       const grid = document.getElementById("articlesGrid");
       if (!grid) return;
+
       const articles = typeof getArticles === "function" ? getArticles() : [];
       
       if (articles.length === 0) {
-        grid.innerHTML = '<p class="muted">No articles available.</p>';
+        grid.innerHTML = `<p style="text-align:center; color:var(--ink-soft);">No articles available.</p>`;
         return;
       }
 
-      grid.innerHTML = articles.map(a => `
-        <article class="product-card">
-          <a href="article.html?id=${a.id}" class="product-card__media">
-            <img src="${a.image || 'https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?auto=format&fit=crop&w=800&q=75'}" alt="${a.title}" loading="lazy">
+      const defaultImg = "https://images.unsplash.com/photo-1524995997946-a1c2e315a42f?auto=format&fit=crop&w=800&q=75";
+
+      grid.innerHTML = articles.map(art => `
+        <article class="product-card" style="margin-bottom: 2rem;">
+          <a href="article.html?id=${art.id}" class="product-card__media" style="height: 18rem;">
+            <img src="${art.image && !art.image.includes('photo-1514432324607') ? art.image : defaultImg}" alt="${art.title}" loading="lazy" style="width:100%; height:100%; object-fit:cover;">
           </a>
-          <div class="product-card__body">
-            <span class="badge">${a.readTime || '4 min read'}</span>
-            <h3><a href="article.html?id=${a.id}" style="color:var(--ink); text-decoration:none;">${a.title}</a></h3>
-            <p>${a.excerpt || ''}</p>
-            <div class="card-actions" style="margin-top:1rem;">
-              <a href="article.html?id=${a.id}" class="btn btn--ghost btn--sm" style="width:100%; text-align:center;">Read Article</a>
-            </div>
+          <div class="product-card__body" style="padding: 2rem;">
+            <span class="badge" style="margin-bottom: 0.75rem; display: inline-block;">${art.readTime || '4 min read'}</span>
+            <h3 style="font-size: 1.5rem; margin-bottom: 0.75rem;"><a href="article.html?id=${art.id}" style="color:inherit; text-decoration:none;">${art.title}</a></h3>
+            <p style="color: var(--ink-soft); margin-bottom: 1.5rem; line-height: 1.6;">${art.excerpt || ''}</p>
+            <a href="article.html?id=${art.id}" class="btn btn--ghost" style="width: 100%; text-align: center;">Read Article</a>
           </div>
         </article>
       `).join("");
-    });
+    })();
   </script>
 </body>
 </html>
