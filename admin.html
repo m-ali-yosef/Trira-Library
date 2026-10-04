@@ -3,445 +3,307 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Admin Portal — Trira</title>
+  <title>Admin Portal — Trira Library</title>
   <link rel="icon" type="image/svg+xml" href="favicon.svg">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&family=Poppins:wght@600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/style.css">
-  <style>
-    .admin-container { max-width: 1200px; margin: 2rem auto; padding: 0 1.25rem; }
-    .admin-tabs { display: flex; gap: 0.75rem; margin-bottom: 2rem; border-bottom: 1px solid var(--line); padding-bottom: 1rem; flex-wrap: wrap; }
-    .admin-tab { padding: 0.6rem 1.25rem; border-radius: var(--radius-sm); background: #fff; border: 1px solid var(--line); font-weight: 700; cursor: pointer; }
-    .admin-tab.is-active { background: var(--teal); color: #fff; border-color: var(--teal); }
-    .admin-section { display: none; }
-    .admin-section.is-active { display: block; }
-    .admin-table { width: 100%; border-collapse: collapse; background: #fff; border-radius: var(--radius); overflow: hidden; border: 1px solid var(--line); margin-bottom: 2rem; }
-    .admin-table th, .admin-table td { padding: 1rem; text-align: left; border-bottom: 1px solid var(--line); font-size: 0.9rem; }
-    .admin-table th { background: var(--bg-alt); font-weight: 700; }
-    .badge-status { display: inline-block; padding: 0.25rem 0.65rem; border-radius: 999px; font-size: 0.75rem; font-weight: 700; }
-    .status-pending { background: #FEF3C7; color: #92400E; }
-    .status-delivered { background: #D1FAE5; color: #065F46; }
-    .modal-overlay { position: fixed; inset: 0; background: rgba(15, 23, 42, 0.4); display: none; align-items: center; justify-content: center; z-index: 100; backdrop-filter: blur(4px); }
-    .modal-overlay.is-open { display: flex; }
-    .modal-content { background: #fff; padding: 2rem; border-radius: var(--radius); width: min(90vw, 500px); max-height: 90vh; overflow-y: auto; }
-    .modal-group { margin-bottom: 1rem; }
-    .modal-group label { display: block; font-weight: 700; font-size: 0.85rem; margin-bottom: 0.3rem; }
-    .modal-group input, .modal-group textarea, .modal-group select { width: 100%; padding: 0.6rem; border: 1px solid var(--line); border-radius: var(--radius-sm); font: inherit; }
-  </style>
 </head>
-<body>
-
+<body style="background: #f8fafc;">
   <!-- Header -->
   <header class="header">
     <div class="header__inner">
       <a href="index.html" class="logo" style="display: flex; align-items: center; gap: 0.6rem; text-decoration: none;">
         <div style="width: 2.2rem; height: 2.2rem; background: var(--teal); color: #fff; display: grid; place-items: center; border-radius: 0.5rem; font-weight: 800; font-size: 1.1rem; font-family: var(--font-heading);">T</div>
-        <div style="font-size: 1.3rem; font-weight: 800; color: var(--teal); font-family: var(--font-heading);">Trira <span style="font-weight: 600; font-size: 0.85rem; color: var(--ink-soft);">Admin Portal</span></div>
+        <div style="font-size: 1.3rem; font-weight: 800; color: var(--teal); font-family: var(--font-heading);">Trira <span style="font-weight: 600; font-size: 0.85rem; color: var(--ink-soft);">Admin</span></div>
       </a>
       <nav class="nav">
-        <a href="index.html" class="btn btn--ghost btn--sm" style="font-weight: 700;">View Store</a>
+        <a href="index.html" target="_blank">View Store ↗</a>
       </nav>
     </div>
   </header>
 
-  <main class="admin-container">
-    <div class="page-hero" style="margin-bottom: 1.5rem;">
-      <h1>Trira Admin Dashboard & Requests</h1>
-      <p>Manage orders, dispatch download links via email, review customer messages, and configure site settings.</p>
-    </div>
+  <main class="section">
+    <div class="container" style="max-width: 1000px;">
+      <h1 style="font-family: var(--font-heading); font-size: 2rem; color: var(--teal-dark); margin-bottom: 2rem;">Admin Dashboard</h1>
 
-    <div class="admin-tabs">
-      <button class="admin-tab is-active" data-tab="orders">📦 Customer Orders (<span id="ordersCount">0</span>)</button>
-      <button class="admin-tab" data-tab="messages">💬 Inquiries / Messages (<span id="msgCount">0</span>)</button>
-      <button class="admin-tab" data-tab="books">📚 Books Management</button>
-      <button class="admin-tab" data-tab="articles">✍️ Articles Management</button>
-      <button class="admin-tab" data-tab="settings">⚙️ Footer & Social Config</button>
-    </div>
-
-    <!-- ORDERS SECTION -->
-    <div class="admin-section is-active" id="section-orders">
-      <h2>Customer Orders & Email Link Dispatch</h2>
-      <table class="admin-table">
-        <thead>
-          <tr><th>Order ID</th><th>Customer (Name / Email)</th><th>Items & Total</th><th>Date</th><th>Status & Download Link</th></tr>
-        </thead>
-        <tbody id="ordersTableBody"></tbody>
-      </table>
-    </div>
-
-    <!-- MESSAGES SECTION -->
-    <div class="admin-section" id="section-messages">
-      <h2>Customer Inquiries & Messages</h2>
-      <table class="admin-table">
-        <thead>
-          <tr><th>ID</th><th>Customer Name & Email</th><th>Message</th><th>Date</th><th>Action</th></tr>
-        </thead>
-        <tbody id="messagesTableBody"></tbody>
-      </table>
-    </div>
-
-    <!-- BOOKS SECTION -->
-    <div class="admin-section" id="section-books">
-      <div style="display:flex; justify-content:space-between; margin-bottom:1rem;">
-        <h2>Manage PDF Books</h2>
-        <button class="btn btn--primary btn--sm" id="openAddModal">+ Add New Book</button>
+      <!-- Tabs Navigation -->
+      <div style="display: flex; gap: 1rem; border-bottom: 2px solid var(--line); margin-bottom: 2rem;">
+        <button type="button" class="admin-tab-btn is-active" onclick="switchTab('books')" style="padding: 0.75rem 1.5rem; background: none; border: none; font-weight: 700; font-size: 1rem; cursor: pointer; color: var(--teal); border-bottom: 3px solid var(--teal); margin-bottom: -2px;">Books & PDF Management</button>
+        <button type="button" class="admin-tab-btn" onclick="switchTab('orders')" style="padding: 0.75rem 1.5rem; background: none; border: none; font-weight: 700; font-size: 1rem; cursor: pointer; color: var(--ink-soft);">Customer Orders</button>
       </div>
-      <table class="admin-table">
-        <thead>
-          <tr><th>Cover</th><th>Title</th><th>Language</th><th>Price</th><th>Actions</th></tr>
-        </thead>
-        <tbody id="booksTableBody"></tbody>
-      </table>
-    </div>
 
-    <!-- ARTICLES SECTION -->
-    <div class="admin-section" id="section-articles">
-      <div style="display:flex; justify-content:space-between; margin-bottom:1rem;">
-        <h2>Manage Articles</h2>
-        <button class="btn btn--primary btn--sm" id="openArticleModal">+ Add Article</button>
+      <!-- Tab 1: Books Management -->
+      <div id="tabBooks" class="admin-tab-content">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+          <h3 style="font-family: var(--font-heading); font-size: 1.3rem;">Manage Store Books & PDF Files</h3>
+          <button type="button" class="btn btn--primary" onclick="openBookModal()">+ Add New Book</button>
+        </div>
+        <div id="adminBooksList" style="display: flex; flex-direction: column; gap: 1rem;">
+          <!-- Rendered dynamically -->
+        </div>
       </div>
-      <table class="admin-table">
-        <thead>
-          <tr><th>Image</th><th>Title</th><th>Read Time</th><th>Actions</th></tr>
-        </thead>
-        <tbody id="articlesTableBody"></tbody>
-      </table>
-    </div>
 
-    <!-- SETTINGS SECTION -->
-    <div class="admin-section" id="section-settings">
-      <h2>Footer & Social Media Configuration</h2>
-      <form id="settingsForm" style="background:#fff; padding:2rem; border-radius:var(--radius); border:1px solid var(--line); max-width:600px;">
-        <div class="modal-group"><label>Support Phone</label><input type="text" id="setPhone"></div>
-        <div class="modal-group"><label>Support Email</label><input type="email" id="setEmail"></div>
-        <div class="modal-group"><label>Facebook URL</label><input type="url" id="setFb"></div>
-        <div class="modal-group"><label>Instagram URL</label><input type="url" id="setIg"></div>
-        <div class="modal-group"><label>TikTok URL</label><input type="url" id="setTt"></div>
-        <button type="submit" class="btn btn--primary" style="margin-top:1rem;">Save Configuration</button>
-      </form>
+      <!-- Tab 2: Orders Management -->
+      <div id="tabOrders" class="admin-tab-content" style="display: none;">
+        <h3 style="font-family: var(--font-heading); font-size: 1.3rem; margin-bottom: 1.5rem;">Customer Purchase Requests & Payments</h3>
+        <div id="adminOrdersList" style="display: flex; flex-direction: column; gap: 1rem;">
+          <!-- Rendered dynamically -->
+        </div>
+      </div>
     </div>
   </main>
 
-  <!-- Add/Edit Book Modal -->
-  <div class="modal-overlay" id="bookModal">
-    <div class="modal-content">
-      <h3 id="modalTitle">Add PDF Book</h3>
-      <form id="bookForm">
-        <input type="hidden" id="editBookId">
-        <input type="hidden" id="bookExistingImg" value="images/products/p1.jpg">
-        <div class="modal-group"><label>Book Title</label><input type="text" id="bookTitle" required></div>
-        <div class="modal-group"><label>Language Section</label><select id="bookLang"><option value="ar">Arabic (عربي)</option><option value="en">English (إنجليزي)</option></select></div>
-        <div class="modal-group"><label>Price (EGP)</label><input type="number" id="bookPrice" required></div>
-        <div class="modal-group"><label>Category</label><input type="text" id="bookCategory"></div>
-        <div class="modal-group"><label>Introduction (مقدمة الكتاب)</label><textarea id="bookIntro" rows="2"></textarea></div>
-        <div class="modal-group"><label>Full Description</label><textarea id="bookDesc" rows="3"></textarea></div>
-        <div class="modal-group"><label>Upload Cover Image</label><input type="file" id="bookImgFile" accept="image/*"></div>
-        <div style="display:flex; gap:0.5rem; justify-content:flex-end; margin-top:1.5rem;">
-          <button type="button" class="btn btn--ghost btn--sm" id="closeModal">Cancel</button>
-          <button type="submit" class="btn btn--primary btn--sm">Save Book</button>
+  <!-- Book Modal (Add/Edit) -->
+  <div id="bookModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.5); z-index:1200; place-items:center; padding:1rem;">
+    <div style="background:#fff; width:100%; max-width:600px; border-radius:1rem; padding:2rem; max-height:90vh; overflow-y:auto; position:relative;">
+      <button type="button" onclick="closeBookModal()" style="position:absolute; top:1rem; right:1rem; background:none; border:none; font-size:1.2rem; cursor:pointer;">✕</button>
+      <h3 id="bookModalTitle" style="font-family:var(--font-heading); font-size:1.4rem; color:var(--teal-dark); margin-bottom:1.5rem;">Add New Book</h3>
+      <form id="bookForm" onsubmit="handleSaveBook(event)" style="display:flex; flex-direction:column; gap:1rem;">
+        <input type="hidden" id="bookId">
+
+        <div>
+          <label style="display:block; font-size:0.85rem; font-weight:600; margin-bottom:0.3rem;">Book Title</label>
+          <input type="text" id="bookTitle" required style="width:100%; padding:0.75rem; border:1px solid var(--line); border-radius:0.5rem;">
         </div>
+
+        <div style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem;">
+          <div>
+            <label style="display:block; font-size:0.85rem; font-weight:600; margin-bottom:0.3rem;">Price (EGP)</label>
+            <input type="number" id="bookPrice" required style="width:100%; padding:0.75rem; border:1px solid var(--line); border-radius:0.5rem;">
+          </div>
+          <div>
+            <label style="display:block; font-size:0.85rem; font-weight:600; margin-bottom:0.3rem;">Language</label>
+            <select id="bookLang" required style="width:100%; padding:0.75rem; border:1px solid var(--line); border-radius:0.5rem; background:#fff;">
+              <option value="en">English (إنجليزي)</option>
+              <option value="ar">العربية (Arabic)</option>
+            </select>
+          </div>
+          <div>
+            <label style="display:block; font-size:0.85rem; font-weight:600; margin-bottom:0.3rem;">Category</label>
+            <select id="bookCategory" required style="width:100%; padding:0.75rem; border:1px solid var(--line); border-radius:0.5rem; background:#fff;">
+              <option value="Business">إدارة الأعمال / Business</option>
+              <option value="General">عام / General</option>
+              <option value="IT">تكنولوجيا المعلومات / IT</option>
+              <option value="History">تاريخ / History</option>
+              <option value="Novels">روايات / Novels</option>
+              <option value="Kids Books">كتب أطفال / Kids Books</option>
+            </select>
+          </div>
+        </div>
+
+        <div>
+          <label style="display:block; font-size:0.85rem; font-weight:600; margin-bottom:0.3rem;">Cover Image (Browse from device)</label>
+          <input type="file" id="bookImageFile" accept="image/*" style="width:100%; padding:0.5rem; border:1px solid var(--line); border-radius:0.5rem; background:#f8fafc;">
+        </div>
+
+        <div>
+          <label style="display:block; font-size:0.85rem; font-weight:600; margin-bottom:0.3rem;">PDF File Attachment (Browse from device)</label>
+          <input type="file" id="bookPdfFile" accept=".pdf" style="width:100%; padding:0.5rem; border:1px solid var(--line); border-radius:0.5rem; background:#f8fafc;">
+        </div>
+
+        <div>
+          <label style="display:block; font-size:0.85rem; font-weight:600; margin-bottom:0.3rem;">Introduction / Summary</label>
+          <textarea id="bookIntro" rows="2" style="width:100%; padding:0.75rem; border:1px solid var(--line); border-radius:0.5rem;"></textarea>
+        </div>
+        <div>
+          <label style="display:block; font-size:0.85rem; font-weight:600; margin-bottom:0.3rem;">Full Description</label>
+          <textarea id="bookDesc" rows="3" style="width:100%; padding:0.75rem; border:1px solid var(--line); border-radius:0.5rem;"></textarea>
+        </div>
+        <button type="submit" class="btn btn--primary" style="margin-top:1rem;">Save Book</button>
       </form>
     </div>
   </div>
 
-  <!-- Add/Edit Article Modal -->
-  <div class="modal-overlay" id="articleModal">
-    <div class="modal-content">
-      <h3 id="articleModalTitle">Add Article</h3>
-      <form id="articleForm">
-        <input type="hidden" id="editArticleId">
-        <input type="hidden" id="artExistingImg" value="https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?auto=format&fit=crop&w=800&q=75">
-        <div class="modal-group"><label>Article Title</label><input type="text" id="artTitle" required></div>
-        <div class="modal-group"><label>Read Time</label><input type="text" id="artReadTime" value="4 min read"></div>
-        <div class="modal-group"><label>Excerpt / Summary (ملخص قصير)</label><textarea id="artExcerpt" rows="2"></textarea></div>
-        <div class="modal-group"><label>Full Content (المحتوى التفصيلي للمقال)</label><textarea id="artContent" rows="4"></textarea></div>
-        <div class="modal-group"><label>Upload Article Image</label><input type="file" id="artImgFile" accept="image/*"></div>
-        <div style="display:flex; gap:0.5rem; justify-content:flex-end; margin-top:1.5rem;">
-          <button type="button" class="btn btn--ghost btn--sm" id="closeArticleModal">Cancel</button>
-          <button type="submit" class="btn btn--primary btn--sm">Save Article</button>
-        </div>
-      </form>
-    </div>
-  </div>
-
-  <script src="js/data.js"></script>
+  <script src="js/data.js?v=2.4"></script>
   <script>
     document.addEventListener("DOMContentLoaded", () => {
-      document.querySelectorAll(".admin-tab").forEach(tab => {
-        tab.addEventListener("click", () => {
-          document.querySelectorAll(".admin-tab").forEach(t => t.classList.remove("is-active"));
-          document.querySelectorAll(".admin-section").forEach(s => s.classList.remove("is-active"));
-          tab.classList.add("is-active");
-          document.getElementById(`section-${tab.dataset.tab}`).classList.add("is-active");
-        });
-      });
-      loadAdmin();
+      renderAdminBooks();
+      renderAdminOrders();
     });
 
-    function loadAdmin() {
-      const books = getProducts();
-      const articles = getArticles();
-      const orders = getOrders();
-      const messages = getMessages();
-      const settings = getSettings();
+    function switchTab(tab) {
+      const booksTab = document.getElementById("tabBooks");
+      const ordersTab = document.getElementById("tabOrders");
+      const btns = document.querySelectorAll(".admin-tab-btn");
 
-      document.getElementById("ordersCount").textContent = orders.length;
-      document.getElementById("msgCount").textContent = messages.length;
+      btns.forEach(b => {
+        b.style.color = "var(--ink-soft)";
+        b.style.borderBottom = "none";
+      });
 
-      document.getElementById("setPhone").value = settings.phone || "";
-      document.getElementById("setEmail").value = settings.email || "";
-      document.getElementById("setFb").value = settings.facebook || "";
-      document.getElementById("setIg").value = settings.instagram || "";
-      document.getElementById("setTt").value = settings.tiktok || "";
-
-      document.getElementById("ordersTableBody").innerHTML = orders.length === 0 ? `<tr><td colspan="5" style="text-align:center;">No requests yet.</td></tr>` : orders.map(o => `
-        <tr>
-          <td><strong>${o.id}</strong></td>
-          <td>${o.customer.name}<br><small class="muted">${o.customer.email} | ${o.customer.phone}</small></td>
-          <td>${o.items.map(i => `${i.name} (x${i.qty})`).join("<br>")}<br><strong>Total: ${o.total} EGP</strong></td>
-          <td><small>${o.date}</small></td>
-          <td>
-            <span class="badge-status status-${o.status.toLowerCase()}">${o.status}</span><br>
-            <div style="display:flex; gap:0.4rem; margin-top:0.4rem;">
-              <input type="text" id="link-${o.id}" value="${o.downloadLink || ''}" placeholder="Paste PDF Download Link..." style="padding:0.3rem; width:100%; font-size:0.8rem; border:1px solid var(--line); border-radius:4px;">
-              <button class="btn btn--primary btn--sm" style="padding:0.3rem 0.6rem; font-size:0.75rem; white-space:nowrap;" onclick="sendDownloadLink('${o.id}')" ${!o.downloadLink ? 'disabled style="opacity:0.5; cursor:not-allowed;"' : ''} id="btn-${o.id}">Send Email</button>
-            </div>
-            <small class="muted">Type link and click Send Email.</small>
-          </td>
-        </tr>
-      `).join("");
-
-      document.getElementById("messagesTableBody").innerHTML = messages.length === 0 ? `<tr><td colspan="5" style="text-align:center;">No messages received.</td></tr>` : messages.map(m => `
-        <tr>
-          <td><strong>${m.id}</strong></td>
-          <td>${m.name}<br><small class="muted">${m.email}</small></td>
-          <td>${m.text}</td>
-          <td><small>${m.date}</small></td>
-          <td><button class="btn btn--ghost btn--sm" onclick="deleteMessage('${m.id}')" style="color:red;">Delete</button></td>
-        </tr>
-      `).join("");
-
-      document.getElementById("booksTableBody").innerHTML = books.map(b => `
-        <tr>
-          <td><img src="${b.image}" style="width:2.5rem; height:2.5rem; object-fit:contain;"></td>
-          <td><strong>${b.title}</strong><br><small class="muted">${b.category || ''}</small></td>
-          <td><span class="badge" style="background:${b.lang === 'ar' ? '#d1fae5' : '#dbeafe'}; color:${b.lang === 'ar' ? '#065f46' : '#1e40af'};">${b.lang === 'ar' ? 'Arabic' : 'English'}</span></td>
-          <td><strong>${b.price} EGP</strong></td>
-          <td>
-            <button class="btn btn--ghost btn--sm" onclick="openEdit(${b.id})">Edit</button>
-            <button class="btn btn--ghost btn--sm" onclick="deleteBook(${b.id})" style="color:red;">Delete</button>
-          </td>
-        </tr>
-      `).join("");
-
-      document.getElementById("articlesTableBody").innerHTML = articles.map(a => `
-        <tr>
-          <td><img src="${a.image}" style="width:2.5rem; height:2.5rem; object-fit:cover; border-radius:4px;"></td>
-          <td><strong>${a.title}</strong><br><small class="muted">${a.excerpt || ''}</small></td>
-          <td>${a.readTime}</td>
-          <td>
-            <button class="btn btn--ghost btn--sm" onclick="openEditArticle(${a.id})">Edit</button>
-            <button class="btn btn--ghost btn--sm" onclick="deleteArticle(${a.id})" style="color:red;">Delete</button>
-          </td>
-        </tr>
-      `).join("");
+      if (tab === 'books') {
+        booksTab.style.display = "block";
+        ordersTab.style.display = "none";
+        btns[0].style.color = "var(--teal)";
+        btns[0].style.borderBottom = "3px solid var(--teal)";
+        renderAdminBooks();
+      } else {
+        booksTab.style.display = "none";
+        ordersTab.style.display = "block";
+        btns[1].style.color = "var(--teal)";
+        btns[1].style.borderBottom = "3px solid var(--teal)";
+        renderAdminOrders();
+      }
     }
 
-    window.sendDownloadLink = function(orderId) {
-      const input = document.getElementById(`link-${orderId}`);
-      const link = input.value.trim();
-      if (!link) {
-        alert("Please enter a valid download link first.");
+    function renderAdminBooks() {
+      const container = document.getElementById("adminBooksList");
+      const books = typeof getProducts === "function" ? getProducts() : [];
+
+      if (books.length === 0) {
+        container.innerHTML = `<p style="color:var(--ink-soft);">No books found.</p>`;
         return;
       }
 
-      let orders = getOrders();
-      let targetOrder = null;
-      orders = orders.map(o => {
-        if (o.id === orderId) {
-          targetOrder = { ...o, downloadLink: link, status: "Delivered" };
-          return targetOrder;
-        }
-        return o;
-      });
-
-      saveOrders(orders);
-      loadAdmin();
-
-      if (targetOrder) {
-        alert(`[Email Dispatched Successfully]\n\nTo: ${targetOrder.customer.email}\nSubject: Your Trira eBook Download Link\nDownload URL: ${link}`);
-      }
-    };
-
-    document.addEventListener("input", e => {
-      if (e.target && e.target.id && e.target.id.startsWith("link-")) {
-        const orderId = e.target.id.replace("link-", "");
-        const btn = document.getElementById(`btn-${orderId}`);
-        if (btn) {
-          if (e.target.value.trim().length > 0) {
-            btn.removeAttribute("disabled");
-            btn.style.opacity = "1";
-            btn.style.cursor = "pointer";
-          } else {
-            btn.setAttribute("disabled", "true");
-            btn.style.opacity = "0.5";
-            btn.style.cursor = "not-allowed";
-          }
-        }
-      }
-    });
-
-    function deleteMessage(id) {
-      if (confirm("Delete message?")) {
-        saveMessages(getMessages().filter(m => m.id !== id));
-        loadAdmin();
-      }
+      container.innerHTML = books.map(b => `
+        <div style="background:#fff; border:1px solid var(--line); border-radius:0.75rem; padding:1.25rem; display:flex; justify-content:space-between; align-items:center; gap:1rem;">
+          <div style="display:flex; gap:1rem; align-items:center;">
+            <img src="${b.image}" alt="${b.title}" style="width:3rem; height:4rem; object-fit:cover; border-radius:0.4rem; border:1px solid var(--line);">
+            <div>
+              <h4 style="font-family:var(--font-heading); font-size:1.05rem; margin-bottom:0.2rem;">${b.title}</h4>
+              <p style="font-size:0.85rem; color:var(--teal); font-weight:700;">${b.price} EGP | Lang: <span style="text-transform:uppercase;">${b.lang || 'en'}</span> | Cat: ${b.category} | <span style="color:var(--ink-soft); font-weight:400;">PDF: ${b.downloadLink && b.downloadLink !== '#' ? 'Attached ✓' : 'None'}</span></p>
+            </div>
+          </div>
+          <div style="display:flex; gap:0.5rem;">
+            <button type="button" class="btn btn--ghost" onclick="editBook(${b.id})" style="padding:0.4rem 0.8rem; font-size:0.85rem;">Edit</button>
+            <button type="button" class="btn btn--ghost" onclick="deleteBook(${b.id})" style="padding:0.4rem 0.8rem; font-size:0.85rem; color:#ef4444; border-color:#fca5a5;">Delete</button>
+          </div>
+        </div>
+      `).join("");
     }
 
-    document.getElementById("settingsForm").onsubmit = (e) => {
-      e.preventDefault();
-      const settings = {
-        phone: document.getElementById("setPhone").value,
-        email: document.getElementById("setEmail").value,
-        facebook: document.getElementById("setFb").value,
-        instagram: document.getElementById("setIg").value,
-        tiktok: document.getElementById("setTt").value
-      };
-      saveSettings(settings);
-      alert("Footer configuration saved successfully!");
-    };
-
-    const modal = document.getElementById("bookModal");
-    document.getElementById("openAddModal").onclick = () => {
-      document.getElementById("modalTitle").textContent = "Add PDF Book";
-      document.getElementById("editBookId").value = "";
-      document.getElementById("bookForm").reset();
-      modal.classList.add("is-open");
-    };
-    document.getElementById("closeModal").onclick = () => modal.classList.remove("is-open");
-
-    function openEdit(id) {
-      const b = getProducts().find(x => x.id === id);
-      if (!b) return;
-      document.getElementById("modalTitle").textContent = "Edit PDF Book";
-      document.getElementById("editBookId").value = b.id;
-      document.getElementById("bookTitle").value = b.title || "";
-      document.getElementById("bookLang").value = b.lang || "ar";
-      document.getElementById("bookPrice").value = b.price || 0;
-      document.getElementById("bookCategory").value = b.category || "";
-      document.getElementById("bookIntro").value = b.introduction || "";
-      document.getElementById("bookDesc").value = b.description || "";
-      document.getElementById("bookExistingImg").value = b.image || "";
-      modal.classList.add("is-open");
-    }
-
-    document.getElementById("bookForm").onsubmit = (e) => {
-      e.preventDefault();
-      const id = document.getElementById("editBookId").value;
-      const data = {
-        id: id ? parseInt(id) : Date.now(),
-        title: document.getElementById("bookTitle").value,
-        lang: document.getElementById("bookLang").value,
-        price: parseFloat(document.getElementById("bookPrice").value),
-        category: document.getElementById("bookCategory").value,
-        introduction: document.getElementById("bookIntro").value,
-        description: document.getElementById("bookDesc").value,
-        image: document.getElementById("bookExistingImg").value
-      };
-
-      const file = document.getElementById("bookImgFile").files[0];
-      const save = (img) => {
-        data.image = img;
-        let books = getProducts();
-        if (id) {
-          books = books.map(x => x.id == id ? data : x);
-        } else {
-          books.push(data);
-        }
-        saveProducts(books);
-        modal.classList.remove("is-open");
-        loadAdmin();
-      };
-
-      if (file) {
-        const reader = new FileReader();
-        reader.onload = (evt) => save(evt.target.result);
-        reader.readAsDataURL(file);
+    function openBookModal(book = null) {
+      const modal = document.getElementById("bookModal");
+      modal.style.display = "grid";
+      if (book) {
+        document.getElementById("bookModalTitle").textContent = "Edit Book";
+        document.getElementById("bookId").value = book.id;
+        document.getElementById("bookTitle").value = book.title;
+        document.getElementById("bookPrice").value = book.price;
+        document.getElementById("bookLang").value = book.lang || "en";
+        document.getElementById("bookCategory").value = book.category || "General";
+        document.getElementById("bookIntro").value = book.introduction || "";
+        document.getElementById("bookDesc").value = book.description || "";
+        document.getElementById("bookImageFile").value = "";
+        document.getElementById("bookPdfFile").value = "";
       } else {
-        save(data.image);
+        document.getElementById("bookModalTitle").textContent = "Add New Book";
+        document.getElementById("bookForm").reset();
+        document.getElementById("bookId").value = "";
       }
-    };
+    }
+
+    function closeBookModal() {
+      document.getElementById("bookModal").style.display = "none";
+    }
+
+    function editBook(id) {
+      const books = getProducts();
+      const book = books.find(b => b.id == id);
+      if (book) openBookModal(book);
+    }
 
     function deleteBook(id) {
-      if (confirm("Delete book?")) {
-        saveProducts(getProducts().filter(x => x.id !== id));
-        loadAdmin();
-      }
+      if (!confirm("Are you sure you want to delete this book?")) return;
+      let books = getProducts();
+      books = books.filter(b => b.id != id);
+      saveProducts(books);
+      renderAdminBooks();
     }
 
-    const artModal = document.getElementById("articleModal");
-    document.getElementById("openArticleModal").onclick = () => {
-      document.getElementById("articleModalTitle").textContent = "Add Article";
-      document.getElementById("editArticleId").value = "";
-      document.getElementById("articleForm").reset();
-      artModal.classList.add("is-open");
-    };
-    document.getElementById("closeArticleModal").onclick = () => artModal.classList.remove("is-open");
-
-    function openEditArticle(id) {
-      const a = getArticles().find(x => x.id === id);
-      if (!a) return;
-      document.getElementById("articleModalTitle").textContent = "Edit Article";
-      document.getElementById("editArticleId").value = a.id;
-      document.getElementById("artTitle").value = a.title || "";
-      document.getElementById("artReadTime").value = a.readTime || "4 min read";
-      document.getElementById("artExcerpt").value = a.excerpt || "";
-      document.getElementById("artContent").value = a.content || "";
-      document.getElementById("artExistingImg").value = a.image || "";
-      artModal.classList.add("is-open");
-    }
-
-    document.getElementById("articleForm").onsubmit = (e) => {
+    function handleSaveBook(e) {
       e.preventDefault();
-      const id = document.getElementById("editArticleId").value;
-      const data = {
-        id: id ? parseInt(id) : Date.now(),
-        title: document.getElementById("artTitle").value,
-        readTime: document.getElementById("artReadTime").value,
-        excerpt: document.getElementById("artExcerpt").value,
-        content: document.getElementById("artContent").value,
-        image: document.getElementById("artExistingImg").value
-      };
+      const id = document.getElementById("bookId").value;
+      const title = document.getElementById("bookTitle").value;
+      const price = parseFloat(document.getElementById("bookPrice").value);
+      const lang = document.getElementById("bookLang").value;
+      const category = document.getElementById("bookCategory").value;
+      const introduction = document.getElementById("bookIntro").value;
+      const description = document.getElementById("bookDesc").value;
 
-      const file = document.getElementById("artImgFile").files[0];
-      const save = (img) => {
-        data.image = img;
-        let articles = getArticles();
-        if (id) {
-          articles = articles.map(x => x.id == id ? data : x);
+      const imageFile = document.getElementById("bookImageFile").files[0];
+      const pdfFile = document.getElementById("bookPdfFile").files[0];
+
+      let books = getProducts();
+      let existingBook = id ? books.find(b => b.id == id) : null;
+
+      let imagePath = existingBook ? existingBook.image : "images/products/p1.jpg";
+      let pdfPath = existingBook ? existingBook.downloadLink : "#";
+
+      const processImageAndSave = () => {
+        if (imageFile) {
+          const reader = new FileReader();
+          reader.onload = function(uploadEvent) {
+            imagePath = uploadEvent.target.result;
+            processPdfAndSave(imagePath);
+          };
+          reader.readAsDataURL(imageFile);
         } else {
-          articles.push(data);
+          processPdfAndSave(imagePath);
         }
-        saveArticles(articles);
-        artModal.classList.remove("is-open");
-        loadAdmin();
       };
 
-      if (file) {
-        const reader = new FileReader();
-        reader.onload = (evt) => save(evt.target.result);
-        reader.readAsDataURL(file);
-      } else {
-        save(data.image);
-      }
-    };
+      const processPdfAndSave = (finalImage) => {
+        if (pdfFile) {
+          const readerPdf = new FileReader();
+          readerPdf.onload = function(uploadEventPdf) {
+            pdfPath = uploadEventPdf.target.result;
+            saveFinalData(finalImage, pdfPath);
+          };
+          readerPdf.readAsDataURL(pdfFile);
+        } else {
+          saveFinalData(finalImage, pdfPath);
+        }
+      };
 
-    function deleteArticle(id) {
-      if (confirm("Delete article?")) {
-        saveArticles(getArticles().filter(x => x.id !== id));
-        loadAdmin();
+      const saveFinalData = (finalImage, finalPdf) => {
+        if (id) {
+          books = books.map(b => b.id == id ? { ...b, title, price, lang, category, image: finalImage, downloadLink: finalPdf, introduction, description } : b);
+        } else {
+          const newBook = {
+            id: Date.now(),
+            title, price, lang, category, image: finalImage, downloadLink: finalPdf, introduction, description
+          };
+          books.push(newBook);
+        }
+
+        saveProducts(books);
+        closeBookModal();
+        renderAdminBooks();
+      };
+
+      processImageAndSave();
+    }
+
+    function renderAdminOrders() {
+      const container = document.getElementById("adminOrdersList");
+      const orders = typeof getOrders === "function" ? getOrders() : [];
+
+      if (orders.length === 0) {
+        container.innerHTML = `<p style="color:var(--ink-soft);">No customer orders yet.</p>`;
+        return;
       }
+
+      container.innerHTML = orders.map(o => `
+        <div style="background:#fff; border:1px solid var(--line); border-radius:0.75rem; padding:1.25rem;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.75rem; border-bottom:1px solid var(--line); padding-bottom:0.5rem;">
+            <div>
+              <span style="font-weight:700; color:var(--teal-dark);">${o.id}</span>
+              <span style="font-size:0.85rem; color:var(--ink-soft); margin-left:0.75rem;">Customer: <strong>${o.customer.name}</strong> (${o.customer.email})</span>
+            </div>
+            <span style="background:${o.paymentStatus === 'paid' ? '#dcfce7' : '#fef9c3'}; color:${o.paymentStatus === 'paid' ? '#166534' : '#854d0e'}; padding:0.2rem 0.6rem; border-radius:1rem; font-size:0.75rem; font-weight:700;">
+              ${o.paymentStatus === 'paid' ? '✓ Paid (API Verified)' : 'Pending Payment'}
+            </span>
+          </div>
+          <p style="font-size:0.85rem; color:var(--ink-soft); margin-bottom:0.5rem;">Total Amount: <strong>${o.total} EGP</strong> | Date: ${o.date}</p>
+          <div style="font-size:0.85rem; font-weight:600; color:var(--teal); margin-top:0.5rem;">Ordered Items:</div>
+          <ul style="margin:0.25rem 0 0 1.25rem; font-size:0.85rem; color:var(--ink);">
+            ${o.items.map(i => `<li>${i.title} (${i.price} EGP)</li>`).join("")}
+          </ul>
+        </div>
+      `).join("");
     }
   </script>
 </body>

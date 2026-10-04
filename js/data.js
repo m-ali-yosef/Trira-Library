@@ -20,42 +20,42 @@ const DEFAULT_BOOKS = [
     price: 350,
     category: "Business",
     introduction: "دليلك الشامل لفهم أحدث معايير إدارة المشاريع واجتياز الاختبار الدولي بثقة.",
-    description: "مرجع شامل ومبسط لاجتياز اختبار إدارة المشاريع الاحترافية وفهم منهجيات Agile و Waterfall باللغة العربية مع نماذج عملية واختبارات تجريبية.",
+    description: "مرجع شامل ومبسط لاجتياز اختبار إدارة المشاريع الاحترافية وفهم منهجيات Agile و Waterfall باللغة العربية مع نماذج عملية واختبارات تجريبية وتطبيقات حقيقية.",
     image: "images/products/p1.jpg",
-    downloadLink: ""
-  },
-  {
-    id: 3,
-    title: "أساسيات التحليل المالي للأعمال",
-    lang: "ar",
-    price: 290,
-    category: "Finance",
-    introduction: "تعلم قراءة القوائم المالية، تحليل النسب، واتخاذ القرارات الاستثمارية بدقة واحرافية.",
-    description: "دليل عملي لفهم القوائم المالية، حساب مؤشرات السيولة والربحية، وتقييم الأداء المالي للشركات.",
-    image: "images/products/p3.jpg",
-    downloadLink: ""
+    downloadLink: "#"
   },
   {
     id: 2,
+    title: "أساسيات التحليل المالي للأعمال",
+    lang: "ar",
+    price: 290,
+    category: "Business",
+    introduction: "تعلم قراءة القوائم المالية، تحليل النسب، واتخاذ القرارات الاستثمارية بدقة واحترافية.",
+    description: "دليل عملي لفهم القوائم المالية، حساب مؤشرات السيولة والربحية، وتقييم الأداء المالي للشركات بطريقة مبسطة واحترافية.",
+    image: "images/products/p3.jpg",
+    downloadLink: "#"
+  },
+  {
+    id: 3,
     title: "Advanced JavaScript & TypeScript Mastery",
     lang: "en",
     price: 420,
-    category: "Programming",
+    category: "IT",
     introduction: "Deep dive into modern software patterns, clean architecture, and advanced type systems.",
     description: "Master modern software architecture, design patterns, and asynchronous programming in JS and TS with production-grade examples.",
     image: "images/products/p2.jpg",
-    downloadLink: ""
+    downloadLink: "#"
   },
   {
     id: 4,
     title: "Digital Transformation & Business Strategy",
     lang: "en",
     price: 500,
-    category: "Management",
+    category: "Business",
     introduction: "Comprehensive guide for modern enterprise digital operating models, RAG systems, and AI integration.",
-    description: "Explore enterprise digital transformation frameworks, cloud strategies, and AI-augmented business workflows.",
+    description: "Explore enterprise digital transformation frameworks, cloud strategies, and AI-augmented business workflows for modern executives.",
     image: "images/products/p4.jpg",
-    downloadLink: ""
+    downloadLink: "#"
   }
 ];
 
@@ -65,7 +65,7 @@ const DEFAULT_ARTICLES = [
     title: "How Digital E-Books Transform Continuous Learning",
     readTime: "4 min read",
     excerpt: "Discover why digital reference manuals and structured PDFs outperform traditional learning in fast-paced industries.",
-    content: "Digital books and structured PDF guides provide an unprecedented level of accessibility and focused learning. In fast-paced technical and business environments, waiting for physical books or sorting through unverified online blogs wastes valuable time. Curated e-books offer distilled expertise, allowing professionals to absorb complex architectural patterns, financial strategies, or project management frameworks directly at their desktop or mobile device. Trira is dedicated to delivering these high-impact resources with 100% digital clarity.",
+    content: "Digital books and structured PDF guides provide an unprecedented level of accessibility and focused learning...",
     image: "https://images.unsplash.com/photo-1524995997946-a1c2e315a42f?auto=format&fit=crop&w=800&q=75"
   }
 ];
@@ -88,7 +88,8 @@ function getProducts() {
     const saved = localStorage.getItem("trira_books_v1");
     if (saved) {
       const parsed = JSON.parse(saved);
-      if (parsed && parsed.length >= DEFAULT_BOOKS.length) {
+      // إذا كانت البيانات القديمة غير مطابقة أو فارغة، نقوم بتحديثها بالقالب الشامل
+      if (parsed && parsed.length > 0 && parsed[0].category) {
         return parsed;
       }
     }

@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Trira — Professional Digital PDF Library</title>
+  <title>Trira Library — Professional PDF Digital Library & Books</title>
   <link rel="icon" type="image/svg+xml" href="favicon.svg">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -23,7 +23,8 @@
         <a href="articles.html">Articles</a>
         <a href="about.html">About Us</a>
       </nav>
-      <div class="header__actions">
+      <div class="header__actions" style="display: flex; gap: 0.75rem; align-items: center;">
+        <button type="button" class="btn btn--ghost" onclick="showMyOrdersModal()" style="font-size: 0.85rem; padding: 0.4rem 0.8rem;">📦 My Orders</button>
         <button type="button" class="icon-btn" data-cart-toggle aria-label="Open cart">
           🛒 <span class="cart-count" style="display:none;">0</span>
         </button>
@@ -31,22 +32,30 @@
     </div>
   </header>
 
-  <main class="section">
+  <!-- Hero Section -->
+  <section class="section" style="padding-top: 3rem; padding-bottom: 1.5rem; text-align: center;">
     <div class="container">
-      <header class="page-hero" style="text-align: center; margin-bottom: 2rem;">
-        <h1>Trira Professional PDF Library</h1>
-        <p>Choose your preferred language section to browse available professional books and guides.</p>
-        
-        <!-- Language Switcher Tabs -->
-        <div class="filters" style="justify-content: center; margin-top: 1.5rem; display: flex; gap: 0.5rem;">
-          <button type="button" class="filter-btn is-active" id="btnAr" onclick="switchLang('ar', this)" style="padding: 0.6rem 1.5rem; border-radius: var(--radius-sm); font-weight: 700; cursor: pointer; border: 1px solid var(--line); background: var(--teal); color: #fff;">الكتب العربية (Arabic Books)</button>
-          <button type="button" class="filter-btn" id="btnEn" onclick="switchLang('en', this)" style="padding: 0.6rem 1.5rem; border-radius: var(--radius-sm); font-weight: 700; cursor: pointer; border: 1px solid var(--line); background: #fff; color: var(--ink);">English Books</button>
-        </div>
-      </header>
+      <h1 style="font-size: 2.5rem; font-family: var(--font-heading); color: var(--teal-dark); margin-bottom: 1rem;">Professional Digital PDF Bookstore</h1>
+      <p style="color: var(--ink-soft); font-size: 1.1rem; max-width: 600px; margin: 0 auto 1.5rem;">Explore professional e-books and PDF guides tailored for continuous learning.</p>
+      
+      <!-- Language Filter Buttons -->
+      <div style="display: flex; justify-content: center; gap: 1rem; margin-top: 1.5rem;">
+        <button type="button" class="filter-lang-btn is-active" onclick="setLanguageFilter('en', this)" style="padding: 0.6rem 1.5rem; border-radius: 2rem; border: 2px solid var(--teal); background: var(--teal); color: #fff; font-weight: 700; cursor: pointer; font-size: 1rem;">📖 English Books</button>
+        <button type="button" class="filter-lang-btn" onclick="setLanguageFilter('ar', this)" style="padding: 0.6rem 1.5rem; border-radius: 2rem; border: 2px solid var(--line); background: #fff; color: var(--ink); font-weight: 700; cursor: pointer; font-size: 1rem;">📚 كتب عربية</button>
+      </div>
 
-      <!-- Books Grid -->
-      <div class="grid grid--3" id="booksGrid">
-        <!-- Books rendered dynamically -->
+      <!-- Category Filter Bar -->
+      <div id="categoryFilterBar" style="display: flex; justify-content: center; gap: 0.5rem; flex-wrap: wrap; margin-top: 1.25rem;">
+        <!-- Dynamic Category Pills -->
+      </div>
+    </div>
+  </section>
+
+  <!-- Store Products Grid -->
+  <main class="section" style="padding-top: 1rem;">
+    <div class="container">
+      <div id="productsGrid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 2rem;">
+        <!-- Rendered dynamically -->
       </div>
     </div>
   </main>
@@ -83,24 +92,116 @@
     </div>
   </footer>
 
-  <script src="js/data.js"></script>
-  <script src="js/main.js"></script>
+  <script src="js/data.js?v=2.7"></script>
+  <script src="js/main.js?v=2.7"></script>
   <script>
-    function switchLang(lang, btn) {
-      document.querySelectorAll(".filter-btn").forEach(b => {
-        b.classList.remove("is-active");
-        b.style.background = "#fff";
-        b.style.color = "var(--ink)";
+    let activeLang = 'en';
+    let activeCategory = 'all';
+
+    const categoriesMap = {
+      ar: [
+        { id: 'all', label: 'الكل' },
+        { id: 'Business', label: 'إدارة الأعمال' },
+        { id: 'General', label: 'عام' },
+        { id: 'IT', label: 'تكنولوجيا المعلومات' },
+        { id: 'History', label: 'تاريخ' },
+        { id: 'Novels', label: 'روايات' },
+        { id: 'Kids Books', label: 'كتب أطفال' }
+      ],
+      en: [
+        { id: 'all', label: 'All' },
+        { id: 'Business', label: 'Business' },
+        { id: 'General', label: 'General' },
+        { id: 'IT', label: 'IT' },
+        { id: 'History', label: 'History' },
+        { id: 'Novels', label: 'Novels' },
+        { id: 'Kids Books', label: 'Kids Books' }
+      ]
+    };
+
+    function setLanguageFilter(lang, btn) {
+      activeLang = lang;
+      activeCategory = 'all';
+      
+      document.querySelectorAll('.filter-lang-btn').forEach(b => {
+        b.style.background = '#fff';
+        b.style.color = 'var(--ink)';
+        b.style.borderColor = 'var(--line)';
       });
-      if (btn) {
-        btn.classList.add("is-active");
-        btn.style.background = "var(--teal)";
-        btn.style.color = "#fff";
-      }
-      if (typeof window.renderBooksByLang === "function") {
-        window.renderBooksByLang(lang);
-      }
+      btn.style.background = 'var(--teal)';
+      btn.style.color = '#fff';
+      btn.style.borderColor = 'var(--teal)';
+
+      renderCategoryPills();
+      renderFilteredProducts();
     }
+
+    function setCategoryFilter(cat, btn) {
+      activeCategory = cat;
+      document.querySelectorAll('.cat-pill').forEach(p => {
+        p.style.background = '#f1f5f9';
+        p.style.color = 'var(--ink)';
+      });
+      btn.style.background = 'var(--teal-dark)';
+      btn.style.color = '#fff';
+      renderFilteredProducts();
+    }
+
+    function renderCategoryPills() {
+      const bar = document.getElementById("categoryFilterBar");
+      const cats = categoriesMap[activeLang] || [];
+
+      bar.innerHTML = cats.map(c => `
+        <button type="button" class="cat-pill" onclick="setCategoryFilter('${c.id}', this)" style="padding: 0.4rem 1rem; border-radius: 1.5rem; border: none; background: ${c.id === activeCategory ? 'var(--teal-dark)' : '#f1f5f9'}; color: ${c.id === activeCategory ? '#fff' : 'var(--ink)'}; font-size: 0.85rem; font-weight: 600; cursor: pointer; transition: all 0.2s;">
+          ${c.label}
+        </button>
+      `).join("");
+    }
+
+    function renderFilteredProducts() {
+      const grid = document.getElementById("productsGrid");
+      if (!grid) return;
+
+      const products = typeof getProducts === "function" ? getProducts() : [];
+      let filtered = products.filter(p => (p.lang || 'en') === activeLang);
+
+      if (activeCategory !== 'all') {
+        filtered = filtered.filter(p => p.category === activeCategory);
+      }
+
+      if (filtered.length === 0) {
+        grid.innerHTML = `<p style="text-align:center; color:var(--ink-soft); grid-column:1/-1; padding:3rem;">No books available in this section.</p>`;
+        return;
+      }
+
+      grid.innerHTML = filtered.map(p => `
+        <article class="product-card" style="display:flex; flex-direction:column;">
+          <a href="product.html?id=${p.id}" class="product-card__media" style="height: 16rem; display: block;">
+            <img src="${p.image}" alt="${p.title}" loading="lazy" style="width:100%; height:100%; object-fit:cover;">
+          </a>
+          <div class="product-card__body" style="padding: 1.5rem; display:flex; flex-direction:column; flex:1;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 0.5rem;">
+              <span class="badge">${p.category || 'General'}</span>
+              <span style="font-weight:800; color:var(--teal); font-size:1.1rem;">${p.price} EGP</span>
+            </div>
+            <h3 style="font-size: 1.15rem; margin-bottom: 0.5rem; font-family:var(--font-heading);">
+              <a href="product.html?id=${p.id}" style="color:inherit; text-decoration:none;">${p.title}</a>
+            </h3>
+            <p style="color:var(--ink-soft); font-size:0.85rem; margin-bottom: 1.25rem; line-height:1.5;">${p.introduction || p.description || ''}</p>
+            
+            <div style="display:flex; flex-direction:column; gap:0.5rem; margin-top:auto;">
+              <a href="product.html?id=${p.id}" class="btn btn--ghost" style="width:100%; text-align:center; padding: 0.6rem; font-size: 0.85rem; text-decoration:none;">View Intro</a>
+              <button type="button" class="btn btn--primary" onclick="addToCart(${p.id})" style="width:100%; padding: 0.6rem; font-size: 0.85rem;">Add to Cart</button>
+            </div>
+          </div>
+        </article>
+      `).join("");
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      renderCategoryPills();
+      renderFilteredProducts();
+    });
   </script>
 </body>
 </html>
