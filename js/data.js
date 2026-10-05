@@ -12,31 +12,19 @@ const DEFAULT_SETTINGS = {
   tiktok: "https://tiktok.com"
 };
 
+// الفئات الافتراضية (تحتوي على الاسم بالعربي والإنجليزية لكل فئة)
+const DEFAULT_CATEGORIES = [
+  { id: "Business", ar: "إدارة الأعمال", en: "Business" },
+  { id: "General", ar: "عام", en: "General" },
+  { id: "IT", ar: "تكنولوجيا المعلومات", en: "IT" },
+  { id: "History", ar: "تاريخ", en: "History" },
+  { id: "Novels", ar: "روايات", en: "Novels" },
+  { id: "Kids Books", ar: "كتب أطفال", en: "Kids Books" }
+];
+
 const DEFAULT_BOOKS = [
   {
     id: 1,
-    title: "دليل إدارة المشاريع الاحترافية PMP",
-    lang: "ar",
-    price: 350,
-    category: "Business",
-    introduction: "دليلك الشامل لفهم أحدث معايير إدارة المشاريع واجتياز الاختبار الدولي بثقة.",
-    description: "مرجع شامل ومبسط لاجتياز اختبار إدارة المشاريع الاحترافية وفهم منهجيات Agile و Waterfall باللغة العربية مع نماذج عملية واختبارات تجريبية وتطبيقات حقيقية.",
-    image: "images/products/p1.jpg",
-    downloadLink: "#"
-  },
-  {
-    id: 2,
-    title: "أساسيات التحليل المالي للأعمال",
-    lang: "ar",
-    price: 290,
-    category: "Business",
-    introduction: "تعلم قراءة القوائم المالية، تحليل النسب، واتخاذ القرارات الاستثمارية بدقة واحترافية.",
-    description: "دليل عملي لفهم القوائم المالية، حساب مؤشرات السيولة والربحية، وتقييم الأداء المالي للشركات بطريقة مبسطة واحترافية.",
-    image: "images/products/p3.jpg",
-    downloadLink: "#"
-  },
-  {
-    id: 3,
     title: "Advanced JavaScript & TypeScript Mastery",
     lang: "en",
     price: 420,
@@ -47,7 +35,7 @@ const DEFAULT_BOOKS = [
     downloadLink: "#"
   },
   {
-    id: 4,
+    id: 2,
     title: "Digital Transformation & Business Strategy",
     lang: "en",
     price: 500,
@@ -55,6 +43,17 @@ const DEFAULT_BOOKS = [
     introduction: "Comprehensive guide for modern enterprise digital operating models, RAG systems, and AI integration.",
     description: "Explore enterprise digital transformation frameworks, cloud strategies, and AI-augmented business workflows for modern executives.",
     image: "images/products/p4.jpg",
+    downloadLink: "#"
+  },
+  {
+    id: 3,
+    title: "دليل إدارة المشاريع الاحترافية PMP",
+    lang: "ar",
+    price: 350,
+    category: "Business",
+    introduction: "دليلك الشامل لفهم أحدث معايير إدارة المشاريع واجتياز الاختبار الدولي بثقة.",
+    description: "مرجع شامل ومبسط لاجتياز اختبار إدارة المشاريع الاحترافية وفهم منهجيات Agile و Waterfall باللغة العربية مع نماذج عملية.",
+    image: "images/products/p1.jpg",
     downloadLink: "#"
   }
 ];
@@ -83,15 +82,29 @@ function saveSettings(settings) {
   localStorage.setItem("trira_settings_v1", JSON.stringify(settings));
 }
 
+// دوال إدارة الفئات (Categories)
+function getCategories() {
+  try {
+    const saved = localStorage.getItem("trira_categories_v1");
+    if (saved) {
+      const parsed = JSON.parse(saved);
+      if (parsed && parsed.length > 0) return parsed;
+    }
+  } catch (e) {}
+  localStorage.setItem("trira_categories_v1", JSON.stringify(DEFAULT_CATEGORIES));
+  return DEFAULT_CATEGORIES;
+}
+
+function saveCategories(categories) {
+  localStorage.setItem("trira_categories_v1", JSON.stringify(categories));
+}
+
 function getProducts() {
   try {
     const saved = localStorage.getItem("trira_books_v1");
     if (saved) {
       const parsed = JSON.parse(saved);
-      // إذا كانت البيانات القديمة غير مطابقة أو فارغة، نقوم بتحديثها بالقالب الشامل
-      if (parsed && parsed.length > 0 && parsed[0].category) {
-        return parsed;
-      }
+      if (parsed && parsed.length > 0) return parsed;
     }
   } catch (e) {}
   localStorage.setItem("trira_books_v1", JSON.stringify(DEFAULT_BOOKS));
@@ -128,16 +141,4 @@ function getOrders() {
 
 function saveOrders(orders) {
   localStorage.setItem("trira_orders_v1", JSON.stringify(orders));
-}
-
-function getMessages() {
-  try {
-    const saved = localStorage.getItem("trira_messages_v1");
-    return saved ? JSON.parse(saved) : [];
-  } catch (e) {}
-  return [];
-}
-
-function saveMessages(messages) {
-  localStorage.setItem("trira_messages_v1", JSON.stringify(messages));
 }
