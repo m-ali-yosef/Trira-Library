@@ -35,11 +35,10 @@
   <!-- Hero Section -->
   <section class="section" style="padding-top: 3rem; padding-bottom: 1.5rem; text-align: center;">
     <div class="container">
-      <h1 style="font-size: 2.5rem; font-family: var(--font-heading); color: var(--teal-dark); margin-bottom: 1rem;">Professional Digital PDF Bookstore</h1>
-      <p style="color: var(--ink-soft); font-size: 1.1rem; max-width: 600px; margin: 0 auto 1.5rem;">Explore professional e-books and PDF guides tailored for continuous learning.</p>
+      <h1 style="font-size: 2.5rem; font-family: var(--font-heading); color: var(--teal-dark); margin-bottom: 1.5rem;">Professional Digital PDF Bookstore</h1>
       
-      <!-- Language Filter Buttons -->
-      <div style="display: flex; justify-content: center; gap: 1rem; margin-top: 1.5rem;">
+      <!-- Language Filter Buttons (English on Left, Arabic on Right) -->
+      <div style="display: flex; justify-content: center; gap: 1rem; margin-top: 1rem;">
         <button type="button" class="filter-lang-btn is-active" onclick="setLanguageFilter('en', this)" style="padding: 0.6rem 1.5rem; border-radius: 2rem; border: 2px solid var(--teal); background: var(--teal); color: #fff; font-weight: 700; cursor: pointer; font-size: 1rem;">📖 English Books</button>
         <button type="button" class="filter-lang-btn" onclick="setLanguageFilter('ar', this)" style="padding: 0.6rem 1.5rem; border-radius: 2rem; border: 2px solid var(--line); background: #fff; color: var(--ink); font-weight: 700; cursor: pointer; font-size: 1rem;">📚 كتب عربية</button>
       </div>
@@ -92,8 +91,8 @@
     </div>
   </footer>
 
-  <script src="js/data.js?v=2.7"></script>
-  <script src="js/main.js?v=2.7"></script>
+  <script src="js/data.js?v=3.0"></script>
+  <script src="js/main.js?v=3.0"></script>
   <script>
     let activeLang = 'en';
     let activeCategory = 'all';
@@ -163,10 +162,17 @@
       if (!grid) return;
 
       const products = typeof getProducts === "function" ? getProducts() : [];
-      let filtered = products.filter(p => (p.lang || 'en') === activeLang);
+      
+      let filtered = products.filter(p => {
+        const pLang = (p.lang || 'en').trim().toLowerCase();
+        return pLang === activeLang.toLowerCase();
+      });
 
       if (activeCategory !== 'all') {
-        filtered = filtered.filter(p => p.category === activeCategory);
+        filtered = filtered.filter(p => {
+          const pCat = (p.category || '').trim().toLowerCase();
+          return pCat === activeCategory.trim().toLowerCase();
+        });
       }
 
       if (filtered.length === 0) {
