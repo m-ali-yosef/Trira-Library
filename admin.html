@@ -29,8 +29,9 @@
       <h1 style="font-family: var(--font-heading); font-size: 2rem; color: var(--teal-dark); margin-bottom: 2rem;">Admin Dashboard</h1>
 
       <!-- Tabs Navigation -->
-      <div style="display: flex; gap: 1rem; border-bottom: 2px solid var(--line); margin-bottom: 2rem;">
-        <button type="button" class="admin-tab-btn is-active" onclick="switchTab('books')" style="padding: 0.75rem 1.5rem; background: none; border: none; font-weight: 700; font-size: 1rem; cursor: pointer; color: var(--teal); border-bottom: 3px solid var(--teal); margin-bottom: -2px;">Books & PDF Management</button>
+      <div style="display: flex; gap: 1rem; border-bottom: 2px solid var(--line); margin-bottom: 2rem; flex-wrap: wrap;">
+        <button type="button" class="admin-tab-btn is-active" onclick="switchTab('books')" style="padding: 0.75rem 1.5rem; background: none; border: none; font-weight: 700; font-size: 1rem; cursor: pointer; color: var(--teal); border-bottom: 3px solid var(--teal); margin-bottom: -2px;">Books & PDFs</button>
+        <button type="button" class="admin-tab-btn" onclick="switchTab('categories')" style="padding: 0.75rem 1.5rem; background: none; border: none; font-weight: 700; font-size: 1rem; cursor: pointer; color: var(--ink-soft);">Categories Management</button>
         <button type="button" class="admin-tab-btn" onclick="switchTab('orders')" style="padding: 0.75rem 1.5rem; background: none; border: none; font-weight: 700; font-size: 1rem; cursor: pointer; color: var(--ink-soft);">Customer Orders</button>
       </div>
 
@@ -40,17 +41,22 @@
           <h3 style="font-family: var(--font-heading); font-size: 1.3rem;">Manage Store Books & PDF Files</h3>
           <button type="button" class="btn btn--primary" onclick="openBookModal()">+ Add New Book</button>
         </div>
-        <div id="adminBooksList" style="display: flex; flex-direction: column; gap: 1rem;">
-          <!-- Rendered dynamically -->
-        </div>
+        <div id="adminBooksList" style="display: flex; flex-direction: column; gap: 1rem;"></div>
       </div>
 
-      <!-- Tab 2: Orders Management -->
+      <!-- Tab 2: Categories Management -->
+      <div id="tabCategories" class="admin-tab-content" style="display: none;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+          <h3 style="font-family: var(--font-heading); font-size: 1.3rem;">Manage Book Categories (Arabic & English)</h3>
+          <button type="button" class="btn btn--primary" onclick="openCategoryModal()">+ Add New Category</button>
+        </div>
+        <div id="adminCategoriesList" style="display: flex; flex-direction: column; gap: 1rem;"></div>
+      </div>
+
+      <!-- Tab 3: Orders Management -->
       <div id="tabOrders" class="admin-tab-content" style="display: none;">
         <h3 style="font-family: var(--font-heading); font-size: 1.3rem; margin-bottom: 1.5rem;">Customer Purchase Requests & Payments</h3>
-        <div id="adminOrdersList" style="display: flex; flex-direction: column; gap: 1rem;">
-          <!-- Rendered dynamically -->
-        </div>
+        <div id="adminOrdersList" style="display: flex; flex-direction: column; gap: 1rem;"></div>
       </div>
     </div>
   </main>
@@ -62,12 +68,10 @@
       <h3 id="bookModalTitle" style="font-family:var(--font-heading); font-size:1.4rem; color:var(--teal-dark); margin-bottom:1.5rem;">Add New Book</h3>
       <form id="bookForm" onsubmit="handleSaveBook(event)" style="display:flex; flex-direction:column; gap:1rem;">
         <input type="hidden" id="bookId">
-
         <div>
           <label style="display:block; font-size:0.85rem; font-weight:600; margin-bottom:0.3rem;">Book Title</label>
           <input type="text" id="bookTitle" required style="width:100%; padding:0.75rem; border:1px solid var(--line); border-radius:0.5rem;">
         </div>
-
         <div style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem;">
           <div>
             <label style="display:block; font-size:0.85rem; font-weight:600; margin-bottom:0.3rem;">Price (EGP)</label>
@@ -76,33 +80,25 @@
           <div>
             <label style="display:block; font-size:0.85rem; font-weight:600; margin-bottom:0.3rem;">Language</label>
             <select id="bookLang" required style="width:100%; padding:0.75rem; border:1px solid var(--line); border-radius:0.5rem; background:#fff;">
-              <option value="en">English (إنجليزي)</option>
-              <option value="ar">العربية (Arabic)</option>
+              <option value="en">English</option>
+              <option value="ar">العربية</option>
             </select>
           </div>
           <div>
             <label style="display:block; font-size:0.85rem; font-weight:600; margin-bottom:0.3rem;">Category</label>
-            <select id="bookCategory" required style="width:100%; padding:0.75rem; border:1px solid var(--line); border-radius:0.5rem; background:#fff;">
-              <option value="Business">إدارة الأعمال / Business</option>
-              <option value="General">عام / General</option>
-              <option value="IT">تكنولوجيا المعلومات / IT</option>
-              <option value="History">تاريخ / History</option>
-              <option value="Novels">روايات / Novels</option>
-              <option value="Kids Books">كتب أطفال / Kids Books</option>
+            <select id="bookCategorySelect" required style="width:100%; padding:0.75rem; border:1px solid var(--line); border-radius:0.5rem; background:#fff;">
+              <!-- Dynamic Categories -->
             </select>
           </div>
         </div>
-
         <div>
-          <label style="display:block; font-size:0.85rem; font-weight:600; margin-bottom:0.3rem;">Cover Image (Browse from device)</label>
+          <label style="display:block; font-size:0.85rem; font-weight:600; margin-bottom:0.3rem;">Cover Image (Browse)</label>
           <input type="file" id="bookImageFile" accept="image/*" style="width:100%; padding:0.5rem; border:1px solid var(--line); border-radius:0.5rem; background:#f8fafc;">
         </div>
-
         <div>
-          <label style="display:block; font-size:0.85rem; font-weight:600; margin-bottom:0.3rem;">PDF File Attachment (Browse from device)</label>
+          <label style="display:block; font-size:0.85rem; font-weight:600; margin-bottom:0.3rem;">PDF File (Browse)</label>
           <input type="file" id="bookPdfFile" accept=".pdf" style="width:100%; padding:0.5rem; border:1px solid var(--line); border-radius:0.5rem; background:#f8fafc;">
         </div>
-
         <div>
           <label style="display:block; font-size:0.85rem; font-weight:600; margin-bottom:0.3rem;">Introduction / Summary</label>
           <textarea id="bookIntro" rows="2" style="width:100%; padding:0.75rem; border:1px solid var(--line); border-radius:0.5rem;"></textarea>
@@ -116,38 +112,56 @@
     </div>
   </div>
 
-  <script src="js/data.js?v=2.4"></script>
+  <!-- Category Modal (Add/Edit) -->
+  <div id="categoryModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.5); z-index:1200; place-items:center; padding:1rem;">
+    <div style="background:#fff; width:100%; max-width:450px; border-radius:1rem; padding:2rem; position:relative;">
+      <button type="button" onclick="closeCategoryModal()" style="position:absolute; top:1rem; right:1rem; background:none; border:none; font-size:1.2rem; cursor:pointer;">✕</button>
+      <h3 id="categoryModalTitle" style="font-family:var(--font-heading); font-size:1.3rem; color:var(--teal-dark); margin-bottom:1.5rem;">Add Category</h3>
+      <form id="categoryForm" onsubmit="handleSaveCategory(event)" style="display:flex; flex-direction:column; gap:1rem;">
+        <input type="hidden" id="catOriginalId">
+        <div>
+          <label style="display:block; font-size:0.85rem; font-weight:600; margin-bottom:0.3rem;">Category ID (English Key, e.g. Business)</label>
+          <input type="text" id="catIdKey" required style="width:100%; padding:0.75rem; border:1px solid var(--line); border-radius:0.5rem;" placeholder="Business">
+        </div>
+        <div>
+          <label style="display:block; font-size:0.85rem; font-weight:600; margin-bottom:0.3rem;">Arabic Name (اسم الفئة بالعربي)</label>
+          <input type="text" id="catNameAr" required style="width:100%; padding:0.75rem; border:1px solid var(--line); border-radius:0.5rem;" placeholder="إدارة الأعمال">
+        </div>
+        <div>
+          <label style="display:block; font-size:0.85rem; font-weight:600; margin-bottom:0.3rem;">English Name (Category Name in English)</label>
+          <input type="text" id="catNameEn" required style="width:100%; padding:0.75rem; border:1px solid var(--line); border-radius:0.5rem;" placeholder="Business">
+        </div>
+        <button type="submit" class="btn btn--primary" style="margin-top:1rem;">Save Category</button>
+      </form>
+    </div>
+  </div>
+
+  <script src="js/data.js?v=3.1"></script>
   <script>
     document.addEventListener("DOMContentLoaded", () => {
       renderAdminBooks();
+      renderAdminCategories();
       renderAdminOrders();
     });
 
     function switchTab(tab) {
-      const booksTab = document.getElementById("tabBooks");
-      const ordersTab = document.getElementById("tabOrders");
+      document.getElementById("tabBooks").style.display = tab === 'books' ? 'block' : 'none';
+      document.getElementById("tabCategories").style.display = tab === 'categories' ? 'block' : 'none';
+      document.getElementById("tabOrders").style.display = tab === 'orders' ? 'block' : 'none';
+      
       const btns = document.querySelectorAll(".admin-tab-btn");
-
-      btns.forEach(b => {
-        b.style.color = "var(--ink-soft)";
-        b.style.borderBottom = "none";
+      btns.forEach((b, idx) => {
+        const active = (idx === 0 && tab === 'books') || (idx === 1 && tab === 'categories') || (idx === 2 && tab === 'orders');
+        b.style.color = active ? "var(--teal)" : "var(--ink-soft)";
+        b.style.borderBottom = active ? "3px solid var(--teal)" : "none";
       });
 
-      if (tab === 'books') {
-        booksTab.style.display = "block";
-        ordersTab.style.display = "none";
-        btns[0].style.color = "var(--teal)";
-        btns[0].style.borderBottom = "3px solid var(--teal)";
-        renderAdminBooks();
-      } else {
-        booksTab.style.display = "none";
-        ordersTab.style.display = "block";
-        btns[1].style.color = "var(--teal)";
-        btns[1].style.borderBottom = "3px solid var(--teal)";
-        renderAdminOrders();
-      }
+      if (tab === 'books') renderAdminBooks();
+      if (tab === 'categories') renderAdminCategories();
+      if (tab === 'orders') renderAdminOrders();
     }
 
+    // إدارة الكتب
     function renderAdminBooks() {
       const container = document.getElementById("adminBooksList");
       const books = typeof getProducts === "function" ? getProducts() : [];
@@ -163,7 +177,7 @@
             <img src="${b.image}" alt="${b.title}" style="width:3rem; height:4rem; object-fit:cover; border-radius:0.4rem; border:1px solid var(--line);">
             <div>
               <h4 style="font-family:var(--font-heading); font-size:1.05rem; margin-bottom:0.2rem;">${b.title}</h4>
-              <p style="font-size:0.85rem; color:var(--teal); font-weight:700;">${b.price} EGP | Lang: <span style="text-transform:uppercase;">${b.lang || 'en'}</span> | Cat: ${b.category} | <span style="color:var(--ink-soft); font-weight:400;">PDF: ${b.downloadLink && b.downloadLink !== '#' ? 'Attached ✓' : 'None'}</span></p>
+              <p style="font-size:0.85rem; color:var(--teal); font-weight:700;">${b.price} EGP | Lang: <span style="text-transform:uppercase;">${b.lang}</span> | Cat: ${b.category}</p>
             </div>
           </div>
           <div style="display:flex; gap:0.5rem;">
@@ -174,7 +188,16 @@
       `).join("");
     }
 
+    function populateCategoryDropdown(selectedCat = "") {
+      const select = document.getElementById("bookCategorySelect");
+      const cats = getCategories();
+      select.innerHTML = cats.map(c => `
+        <option value="${c.id}" ${c.id === selectedCat ? 'selected' : ''}>${c.ar} / ${c.en}</option>
+      `).join("");
+    }
+
     function openBookModal(book = null) {
+      populateCategoryDropdown(book ? book.category : "");
       const modal = document.getElementById("bookModal");
       modal.style.display = "grid";
       if (book) {
@@ -183,7 +206,7 @@
         document.getElementById("bookTitle").value = book.title;
         document.getElementById("bookPrice").value = book.price;
         document.getElementById("bookLang").value = book.lang || "en";
-        document.getElementById("bookCategory").value = book.category || "General";
+        document.getElementById("bookCategorySelect").value = book.category || "";
         document.getElementById("bookIntro").value = book.introduction || "";
         document.getElementById("bookDesc").value = book.description || "";
         document.getElementById("bookImageFile").value = "";
@@ -195,20 +218,11 @@
       }
     }
 
-    function closeBookModal() {
-      document.getElementById("bookModal").style.display = "none";
-    }
-
-    function editBook(id) {
-      const books = getProducts();
-      const book = books.find(b => b.id == id);
-      if (book) openBookModal(book);
-    }
-
+    function closeBookModal() { document.getElementById("bookModal").style.display = "none"; }
+    function editBook(id) { const book = getProducts().find(b => b.id == id); if (book) openBookModal(book); }
     function deleteBook(id) {
-      if (!confirm("Are you sure you want to delete this book?")) return;
-      let books = getProducts();
-      books = books.filter(b => b.id != id);
+      if (!confirm("Delete this book?")) return;
+      let books = getProducts().filter(b => b.id != id);
       saveProducts(books);
       renderAdminBooks();
     }
@@ -219,7 +233,7 @@
       const title = document.getElementById("bookTitle").value;
       const price = parseFloat(document.getElementById("bookPrice").value);
       const lang = document.getElementById("bookLang").value;
-      const category = document.getElementById("bookCategory").value;
+      const category = document.getElementById("bookCategorySelect").value;
       const introduction = document.getElementById("bookIntro").value;
       const description = document.getElementById("bookDesc").value;
 
@@ -228,80 +242,124 @@
 
       let books = getProducts();
       let existingBook = id ? books.find(b => b.id == id) : null;
-
       let imagePath = existingBook ? existingBook.image : "images/products/p1.jpg";
       let pdfPath = existingBook ? existingBook.downloadLink : "#";
 
-      const processImageAndSave = () => {
-        if (imageFile) {
-          const reader = new FileReader();
-          reader.onload = function(uploadEvent) {
-            imagePath = uploadEvent.target.result;
-            processPdfAndSave(imagePath);
-          };
-          reader.readAsDataURL(imageFile);
-        } else {
-          processPdfAndSave(imagePath);
-        }
-      };
-
-      const processPdfAndSave = (finalImage) => {
-        if (pdfFile) {
-          const readerPdf = new FileReader();
-          readerPdf.onload = function(uploadEventPdf) {
-            pdfPath = uploadEventPdf.target.result;
-            saveFinalData(finalImage, pdfPath);
-          };
-          readerPdf.readAsDataURL(pdfFile);
-        } else {
-          saveFinalData(finalImage, pdfPath);
-        }
-      };
-
-      const saveFinalData = (finalImage, finalPdf) => {
+      const processFiles = (finalImg, finalPdf) => {
         if (id) {
-          books = books.map(b => b.id == id ? { ...b, title, price, lang, category, image: finalImage, downloadLink: finalPdf, introduction, description } : b);
+          books = books.map(b => b.id == id ? { ...b, title, price, lang, category, image: finalImg, downloadLink: finalPdf, introduction, description } : b);
         } else {
-          const newBook = {
-            id: Date.now(),
-            title, price, lang, category, image: finalImage, downloadLink: finalPdf, introduction, description
-          };
-          books.push(newBook);
+          books.push({ id: Date.now(), title, price, lang, category, image: finalImg, downloadLink: finalPdf, introduction, description });
         }
-
         saveProducts(books);
         closeBookModal();
         renderAdminBooks();
       };
 
-      processImageAndSave();
+      const handlePdf = (imgRes) => {
+        if (pdfFile) {
+          const r = new FileReader();
+          r.onload = (ev) => processFiles(imgRes, ev.target.result);
+          r.readAsDataURL(pdfFile);
+        } else {
+          processFiles(imgRes, pdfPath);
+        }
+      };
+
+      if (imageFile) {
+        const r = new FileReader();
+        r.onload = (ev) => handlePdf(ev.target.result);
+        r.readAsDataURL(imageFile);
+      } else {
+        handlePdf(imagePath);
+      }
+    }
+
+    // إدارة الفئات (Categories Management)
+    function renderAdminCategories() {
+      const container = document.getElementById("adminCategoriesList");
+      const cats = getCategories();
+
+      container.innerHTML = cats.map(c => `
+        <div style="background:#fff; border:1px solid var(--line); border-radius:0.75rem; padding:1.25rem; display:flex; justify-content:space-between; align-items:center;">
+          <div>
+            <h4 style="font-family:var(--font-heading); font-size:1.05rem; margin-bottom:0.2rem;">${c.ar} / ${c.en}</h4>
+            <p style="font-size:0.85rem; color:var(--ink-soft);">Key ID: <code>${c.id}</code></p>
+          </div>
+          <div style="display:flex; gap:0.5rem;">
+            <button type="button" class="btn btn--ghost" onclick="editCategory('${c.id}')" style="padding:0.4rem 0.8rem; font-size:0.85rem;">Edit</button>
+            <button type="button" class="btn btn--ghost" onclick="deleteCategory('${c.id}')" style="padding:0.4rem 0.8rem; font-size:0.85rem; color:#ef4444; border-color:#fca5a5;">Delete</button>
+          </div>
+        </div>
+      `).join("");
+    }
+
+    function openCategoryModal(cat = null) {
+      const modal = document.getElementById("categoryModal");
+      modal.style.display = "grid";
+      if (cat) {
+        document.getElementById("categoryModalTitle").textContent = "Edit Category";
+        document.getElementById("catOriginalId").value = cat.id;
+        document.getElementById("catIdKey").value = cat.id;
+        document.getElementById("catNameAr").value = cat.ar;
+        document.getElementById("catNameEn").value = cat.en;
+      } else {
+        document.getElementById("categoryModalTitle").textContent = "Add Category";
+        document.getElementById("categoryForm").reset();
+        document.getElementById("catOriginalId").value = "";
+      }
+    }
+
+    function closeCategoryModal() { document.getElementById("categoryModal").style.display = "none"; }
+    function editCategory(id) { const cat = getCategories().find(c => c.id === id); if (cat) openCategoryModal(cat); }
+
+    function deleteCategory(id) {
+      const books = getProducts();
+      const inUse = books.some(b => b.category === id);
+      if (inUse) {
+        alert("Cannot delete this category because it is currently assigned to one or more books!");
+        return;
+      }
+      if (!confirm("Are you sure you want to delete this category?")) return;
+
+      let cats = getCategories().filter(c => c.id !== id);
+      saveCategories(cats);
+      renderAdminCategories();
+    }
+
+    function handleSaveCategory(e) {
+      e.preventDefault();
+      const origId = document.getElementById("catOriginalId").value;
+      const idKey = document.getElementById("catIdKey").value.trim();
+      const arName = document.getElementById("catNameAr").value.trim();
+      const enName = document.getElementById("catNameEn").value.trim();
+
+      let cats = getCategories();
+      if (origId) {
+        cats = cats.map(c => c.id === origId ? { id: idKey, ar: arName, en: enName } : c);
+      } else {
+        if (cats.some(c => c.id === idKey)) {
+          alert("Category ID already exists!");
+          return;
+        }
+        cats.push({ id: idKey, ar: arName, en: enName });
+      }
+
+      saveCategories(cats);
+      closeCategoryModal();
+      renderAdminCategories();
     }
 
     function renderAdminOrders() {
       const container = document.getElementById("adminOrdersList");
       const orders = typeof getOrders === "function" ? getOrders() : [];
-
       if (orders.length === 0) {
         container.innerHTML = `<p style="color:var(--ink-soft);">No customer orders yet.</p>`;
         return;
       }
-
       container.innerHTML = orders.map(o => `
         <div style="background:#fff; border:1px solid var(--line); border-radius:0.75rem; padding:1.25rem;">
-          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.75rem; border-bottom:1px solid var(--line); padding-bottom:0.5rem;">
-            <div>
-              <span style="font-weight:700; color:var(--teal-dark);">${o.id}</span>
-              <span style="font-size:0.85rem; color:var(--ink-soft); margin-left:0.75rem;">Customer: <strong>${o.customer.name}</strong> (${o.customer.email})</span>
-            </div>
-            <span style="background:${o.paymentStatus === 'paid' ? '#dcfce7' : '#fef9c3'}; color:${o.paymentStatus === 'paid' ? '#166534' : '#854d0e'}; padding:0.2rem 0.6rem; border-radius:1rem; font-size:0.75rem; font-weight:700;">
-              ${o.paymentStatus === 'paid' ? '✓ Paid (API Verified)' : 'Pending Payment'}
-            </span>
-          </div>
-          <p style="font-size:0.85rem; color:var(--ink-soft); margin-bottom:0.5rem;">Total Amount: <strong>${o.total} EGP</strong> | Date: ${o.date}</p>
-          <div style="font-size:0.85rem; font-weight:600; color:var(--teal); margin-top:0.5rem;">Ordered Items:</div>
-          <ul style="margin:0.25rem 0 0 1.25rem; font-size:0.85rem; color:var(--ink);">
-            ${o.items.map(i => `<li>${i.title} (${i.price} EGP)</li>`).join("")}
-          </ul>
+          <span style="font-weight:700; color:var(--teal-dark);">${o.id}</span> - Customer: <strong>${o.customer.name}</strong> (${o.total} EGP)
         </div>
       `).join("");
     }
